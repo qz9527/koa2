@@ -1,7 +1,7 @@
-const ArticleModel = require('../models/article')
+const ArticleServices = require('../services/article')
 const validate = require('../libs/validate')
 
-class UserController {
+class ArticleController {
 
     static async create(ctx){
         const result = {
@@ -10,15 +10,15 @@ class UserController {
         }
         const formData = ctx.request.body
         console.log(formData)
-        let createResult = await ArticleModel.createArticle(formData)
+        let createResult = await ArticleServices.create(formData)
 
-        if(createResult){
+        if(createResult && createResult.code==200){
             return ctx.body = {
                 success: true,
                 code: 1
             }
         }
-        
+
         return ctx.body = {
             success: false,
             msg: '创建文章失败'
@@ -31,4 +31,4 @@ class UserController {
 
 }
 
-module.exports = UserController
+module.exports = ArticleController
