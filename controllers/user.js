@@ -1,5 +1,5 @@
-const UserModel = require('../models/user')
 const validate = require('../libs/validate')
+const UserServices = require('../services/user')
 
 class UserController {
 
@@ -15,8 +15,8 @@ class UserController {
         }
 
         // 验证用户信息格式
-        let validateResult = await validate.ValidateUser(data)
         console.log('111')
+        let validateResult = await validate.ValidateUser(data)
         if (validateResult.success === false) {
             result = validateResult
             return ctx.body = result
@@ -29,8 +29,8 @@ class UserController {
         }
 
         // 验证是否创建成功
-        let createUesult = await UserModel.createUser(data)
-        if (createUesult) {
+        let createResult = await UserServices.create(data)
+        if (createResult && createResult.code==200) {
             result.success = true
             result.code = 200
             return ctx.body = result
@@ -80,6 +80,28 @@ class UserController {
             }
         }
     }
+
+    static async signOut(ctx) {
+        const session = ctx.session
+        let result = {
+            success: false,
+            msg: null
+        }
+        console.log(session)
+        if(session && session.isLogin === true){
+            session.isLogin = false
+            session.name = ''
+            console.log(session)
+            result.success = true
+            result.msg = '退出登陆'
+            return ctx.body = result
+        }else{
+            result.success = false
+            result.msg = '还没登陆'
+            return ctx.body = result
+        }
+    }
+
 }
 
 module.exports = UserController
